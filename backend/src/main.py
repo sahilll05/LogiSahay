@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
 
-from src.adapters.api.auth_router import router as auth_router
 from src.adapters.api.shipment_router import router as shipment_router
 from src.adapters.api.dashboard_router import router as dashboard_router
 from src.adapters.api.ndr_router import router as ndr_router
@@ -45,7 +44,6 @@ app.add_middleware(
 )
 
 # Routers
-app.include_router(auth_router)
 app.include_router(shipment_router)
 app.include_router(dashboard_router)
 app.include_router(ndr_router)

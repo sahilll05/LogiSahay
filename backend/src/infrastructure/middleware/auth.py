@@ -1,10 +1,7 @@
 from fastapi import Request, Depends
 from typing import Optional
-from src.infrastructure.repositories.auth_repo import SupabaseAuthRepository
 from src.infrastructure.repositories.user_repo import UserRepository
-from src.domain.errors.auth_errors import AuthError
 
-auth_repo = SupabaseAuthRepository()
 user_repo = UserRepository()
 
 

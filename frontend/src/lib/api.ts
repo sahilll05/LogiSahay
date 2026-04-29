@@ -127,21 +127,14 @@ export type NDRAction = 'resend_whatsapp' | 'reattempt' | 'initiate_rto'
 
 // ─── Helper ────────────────────────────────────────────────────────────────────
 
-import { supabase } from './supabase'
-
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
   const normalizedBase = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL
   
-  // Get current session token
-  const { data: { session } } = await supabase.auth.getSession()
-  const token = session?.access_token
-
   const res = await fetch(`${normalizedBase}${normalizedPath}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       ...(options?.headers ?? {}),
     },
   })

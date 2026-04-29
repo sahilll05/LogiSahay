@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
-import { AuthProvider } from '@/components/auth-provider'
 import { LayoutWrapper } from '@/components/layout-wrapper'
 
 const inter = Inter({
@@ -34,11 +33,9 @@ export default function RootLayout({
         className={`${inter.variable} ${plusJakarta.variable} font-sans bg-background text-foreground antialiased`}
       >
         <ThemeProvider>
-          <AuthProvider>
-            <LayoutWrapper>
-              {children}
-            </LayoutWrapper>
-          </AuthProvider>
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
         </ThemeProvider>
       </body>
     </html>
