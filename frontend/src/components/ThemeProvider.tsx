@@ -27,9 +27,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       applyTheme(stored)
       setThemeState(stored)
     } else {
-      // Respect OS preference if no stored preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      const resolved: Theme = prefersDark ? 'dark' : 'light'
+      // Force default to light mode instead of OS preference
+      const resolved: Theme = 'light'
       applyTheme(resolved)
       setThemeState(resolved)
     }
