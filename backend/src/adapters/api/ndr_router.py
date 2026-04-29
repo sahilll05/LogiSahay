@@ -35,10 +35,15 @@ async def get_ndr_cases(
     filter: str = "open",
     user=Depends(get_current_user_optional),
 ):
-    """Get NDR cases filtered by status. Public for demo."""
+    """Get NDR cases filtered by status."""
     try:
-        res = supabase.table("ndr_cases").select("*").eq("status", filter).order("created_at", desc=True).execute()
+        query = supabase.table("ndr_cases").select("*").eq("status", filter)
+        if user:
+            query = query.eq("user_id", user.id)
+        
+        res = query.order("created_at", desc=True).execute()
         cases = res.data or []
+        
         if not cases:
             # No data — return demo seed for the requested filter
             if filter == "open":

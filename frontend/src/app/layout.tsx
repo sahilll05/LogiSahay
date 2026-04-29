@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
-import { Sidebar } from '@/components/Sidebar'
-import { Topbar } from '@/components/Topbar'
 import { ThemeProvider } from '@/components/ThemeProvider'
+import { AuthProvider } from '@/components/auth-provider'
+import { LayoutWrapper } from '@/components/layout-wrapper'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -34,17 +34,11 @@ export default function RootLayout({
         className={`${inter.variable} ${plusJakarta.variable} font-sans bg-background text-foreground antialiased`}
       >
         <ThemeProvider>
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col min-w-0">
-              <Topbar />
-              <main className="flex-1 overflow-y-auto scrollbar-thin">
-                <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
-                  {children}
-                </div>
-              </main>
-            </div>
-          </div>
+          <AuthProvider>
+            <LayoutWrapper>
+              {children}
+            </LayoutWrapper>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

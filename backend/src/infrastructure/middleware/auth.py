@@ -16,8 +16,18 @@ def get_current_user(request: Request):
     jwt = token.split(" ")[1]
     user_id = auth_repo.get_user_from_jwt(jwt)
     user = user_repo.find_by_id(user_id)
+    
     if not user:
-        raise AuthError("User profile not initialized", "UNAUTHORIZED")
+        # User is authenticated via Supabase but has no profile record in 'users' table
+        # We return a minimal transient User object to allow access to the dashboard
+        from src.domain.entities.user import User
+        from datetime import datetime
+        return User(
+            id=user_id,
+            business_name="New Vendor",
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow()
+        )
     return user
 
 

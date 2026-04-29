@@ -455,11 +455,11 @@ export default function NdrPage() {
             })}
         </div>
 
-        {/* ── Right column ────────────────────────────────────────────────── */}
-        <div className="col-span-1 space-y-4">
+        {/* ── Right column (Sidebar) ────────────────────────────────────────── */}
+        <div className="col-span-1 flex flex-col gap-4 h-fit">
 
           {/* "How It Works" animated stepper */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm sticky top-20">
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm sticky top-24 z-10">
             <div className="text-[13px] font-semibold text-slate-900 mb-4 flex items-center gap-1.5">
               <Zap className="w-4 h-4 text-indigo-600" />
               How It Works

@@ -34,15 +34,17 @@ _DEMO_METRICS = {
 async def get_dashboard_metrics(user=Depends(get_current_user_optional)):
     """
     Returns real metrics from Supabase if data exists, else seeds demo data.
-    Public endpoint — no auth required.
     """
     try:
-        # Try to pull real data from Supabase
-        shipment_res = supabase.table("shipments").select("id, status, total_cost, created_at").execute()
+        # Filter by user_id if logged in
+        query = supabase.table("shipments").select("id, status, total_cost, created_at")
+        if user:
+            query = query.eq("user_id", user.id)
+            
+        shipment_res = query.execute()
         shipments = shipment_res.data or []
 
         if not shipments:
-            # Tables exist but are empty — return demo seed
             return {"success": True, "source": "demo", **_DEMO_METRICS}
 
         from datetime import datetime, timezone
@@ -63,8 +65,12 @@ async def get_dashboard_metrics(user=Depends(get_current_user_optional)):
             if s.get("created_at", "").startswith(f"{current_year}-{current_month:02d}")
         )
 
-        # Pull NDR data
-        ndr_res = supabase.table("ndr_cases").select("id, status").execute()
+        # Pull NDR data filtered by user
+        ndr_query = supabase.table("ndr_cases").select("id, status")
+        if user:
+            ndr_query = ndr_query.eq("user_id", user.id)
+            
+        ndr_res = ndr_query.execute()
         ndr_cases = ndr_res.data or []
         ndr_open = sum(1 for n in ndr_cases if n.get("status") == "open")
         ndr_resolved = sum(1 for n in ndr_cases if n.get("status") == "resolved")
@@ -97,9 +103,11 @@ async def get_shipments(
     status: str = "",
     user=Depends(get_current_user_optional),
 ):
-    """Paginated shipments list. Public for demo."""
+    """Paginated shipments list."""
     try:
         query = supabase.table("shipments").select("*").order("created_at", desc=True)
+        if user:
+            query = query.eq("user_id", user.id)
         if status:
             query = query.eq("status", status)
         query = query.range((page - 1) * limit, page * limit - 1)
