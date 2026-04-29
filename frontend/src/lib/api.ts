@@ -109,7 +109,9 @@ export type NDRAction = 'resend_whatsapp' | 'reattempt' | 'initiate_rto'
 // ─── Helper ────────────────────────────────────────────────────────────────────
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`
+  const normalizedBase = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL
+  const res = await fetch(`${normalizedBase}${normalizedPath}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
