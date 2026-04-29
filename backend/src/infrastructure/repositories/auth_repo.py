@@ -2,7 +2,15 @@ from src.domain.repositories.interfaces import IAuthRepository
 from src.infrastructure.db.supabase_client import supabase
 from src.domain.errors.auth_errors import AuthError
 from src.infrastructure.config.settings import get_settings
-import gotrue.errors
+try:
+    import supabase_auth.errors as auth_errors
+except ImportError:
+    try:
+        import gotrue.errors as auth_errors
+    except ImportError:
+        # Fallback for newer supabase versions where errors might be in different places
+        auth_errors = None
+
 import uuid
 
 settings = get_settings()
@@ -20,7 +28,7 @@ class SupabaseAuthRepository(IAuthRepository):
         formatted = f"+91{phone}"
         try:
             supabase.auth.sign_in_with_otp({"phone": formatted})
-        except gotrue.errors.AuthRetryableError as e:
+        except (auth_errors.AuthRetryableError if auth_errors else Exception) as e:
             if "503" in str(e):
                 raise AuthError(
                     "SMS Provider Error: If you are testing locally without Twilio, "
@@ -59,7 +67,7 @@ class SupabaseAuthRepository(IAuthRepository):
                 "refresh_token": res.session.refresh_token,
                 "user": {"id": res.user.id} if res.user else None
             }
-        except gotrue.errors.AuthApiError as e:
+        except (auth_errors.AuthApiError if auth_errors else Exception) as e:
             raise AuthError("Invalid or expired OTP", "OTP_VERIFICATION_FAILED", 401)
         except Exception as e:
             raise AuthError(str(e), "OTP_VERIFICATION_FAILED", 401)
