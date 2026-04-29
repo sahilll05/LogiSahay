@@ -65,6 +65,25 @@ export interface DashboardMetrics {
   attention_needed: Array<{ id: string; issue: string; shipment: string }>
 }
 
+export interface WaLog {
+  id: string
+  to: string
+  content: string
+  msg_type: string
+  direction: 'outbound' | 'inbound'
+  simulated: boolean
+  created_at: string
+}
+
+export interface WaSettings {
+  success: boolean
+  rto_guard_enabled: boolean
+  sms_forward_enabled: boolean
+  savings_this_month: number
+  ndr_prevented: number
+  recovery_rate: number
+}
+
 export interface NDRCase {
   id: string
   tracking_id: string
@@ -200,6 +219,24 @@ export const api = {
   /** Get coordinates for a PIN code from the backend dataset */
   getPinCoords(pincode: string): Promise<PinCoords> {
     return apiFetch(`/shipments/geocoding/${pincode}`)
+  },
+
+  /** WhatsApp logs */
+  getWhatsAppLogs(limit = 10): Promise<{ success: boolean; logs: WaLog[] }> {
+    return apiFetch(`/api/whatsapp/logs?limit=${limit}`)
+  },
+
+  /** WhatsApp settings */
+  getWhatsAppSettings(): Promise<WaSettings> {
+    return apiFetch('/api/whatsapp/settings')
+  },
+
+  /** Update WhatsApp settings */
+  updateWhatsAppSettings(settings: { rto_guard_enabled: boolean; sms_forward_enabled: boolean }): Promise<WaSettings> {
+    return apiFetch('/api/whatsapp/settings', {
+      method: 'POST',
+      body: JSON.stringify(settings),
+    })
   },
 }
 

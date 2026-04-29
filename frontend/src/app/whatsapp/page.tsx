@@ -141,7 +141,7 @@ export default function WhatsAppPage() {
 
   const fetchLogs = useCallback(async () => {
     try {
-      const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/whatsapp/logs?limit=10`).then(r => r.json())
+      const data = await api.getWhatsAppLogs(10)
       setLogs(data.logs || [])
     } catch { setLogs([]) }
     finally { setLoadingLogs(false) }
@@ -149,8 +149,7 @@ export default function WhatsAppPage() {
 
   const fetchSettings = useCallback(async () => {
     try {
-      const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
-      const data = await fetch(`${BASE}/api/whatsapp/settings`).then(r => r.json())
+      const data = await api.getWhatsAppSettings()
       setRtoGuard(data.rto_guard_enabled ?? true)
       setSmsForward(data.sms_forward_enabled ?? true)
       setSavingsThisMonth(data.savings_this_month ?? 0)
@@ -170,14 +169,9 @@ export default function WhatsAppPage() {
     setSettingsSaving(key)
 
     try {
-      const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
-      await fetch(`${BASE}/api/whatsapp/settings`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          rto_guard_enabled: key === 'rto' ? value : rtoGuard,
-          sms_forward_enabled: key === 'sms' ? value : smsForward,
-        }),
+      await api.updateWhatsAppSettings({
+        rto_guard_enabled: key === 'rto' ? value : rtoGuard,
+        sms_forward_enabled: key === 'sms' ? value : smsForward,
       })
     } catch {
       // Rollback on failure
