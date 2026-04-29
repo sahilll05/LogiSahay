@@ -9,40 +9,23 @@ user_repo = UserRepository()
 
 
 def get_current_user(request: Request):
-    """Strict auth — raises 401 if no valid token."""
-    token = request.headers.get("Authorization")
-    if not token or not token.startswith("Bearer "):
-        raise AuthError("Missing authorization token", "UNAUTHORIZED")
-    jwt = token.split(" ")[1]
-    user_id = auth_repo.get_user_from_jwt(jwt)
-    user = user_repo.find_by_id(user_id)
-    
-    if not user:
-        # User is authenticated via Supabase but has no profile record in 'users' table
-        # We return a minimal transient User object to allow access to the dashboard
-        from src.domain.entities.user import User
-        from datetime import datetime
-        return User(
-            id=user_id,
-            business_name="New Vendor",
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
-        )
-    return user
-
+    """Fallback dummy user to skip auth."""
+    from src.domain.entities.user import User
+    from datetime import datetime
+    return User(
+        id="dummy-user",
+        business_name="Demo User",
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
 
 def get_current_user_optional(request: Request) -> Optional[object]:
-    """
-    Soft auth — returns user if token valid, else None.
-    Use this on public endpoints where auth is optional (e.g. rate comparison).
-    Post-hackathon: swap this for get_current_user to enforce login.
-    """
-    token = request.headers.get("Authorization")
-    if not token or not token.startswith("Bearer "):
-        return None
-    try:
-        jwt = token.split(" ")[1]
-        user_id = auth_repo.get_user_from_jwt(jwt)
-        return user_repo.find_by_id(user_id)
-    except Exception:
-        return None
+    """Fallback dummy user to skip auth."""
+    from src.domain.entities.user import User
+    from datetime import datetime
+    return User(
+        id="dummy-user",
+        business_name="Demo User",
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
