@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
   <h1>🚚 LogiSahay</h1>
   <p><strong>Logistics Intelligence & Route Optimization Platform for Indian Micro-Sellers</strong></p>
 </div>
@@ -59,7 +59,7 @@ Configure intelligent auto-responders and notifications for delivery delays. Ope
 
 **1. Clone the repository:**
 \\\ash
-git clone https://github.com/yourusername/LogiSahay.git
+git clone https://github.com/sahilll05/LogiSahay.git
 cd LogiSahay
 \\\
 
